@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel">
+            function Products(){
+                var [item,setItem]=React.useState();
+            React.useEffect(()=>{
+                fetch("http://localhost:3000/Products").then((res)=>{
+                    return res.json().then((data)=>{
+                        console.log(data)
+                        setItem([...data])
+                    })
+                })
+            },[])
+            function DeleteP(id){
+                fetch(`http://localhost:3000/Products/${id}`,{method:"DELETE"}).then((res)=>{console.log(res)})
+            }
+            return <div>
+                <h1>Products</h1>
+                {
+                    !item && (
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only"></span>
+                            </div>
+                    )
+                }
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                {
+                    item?.map((p)=>{
+                        return <div class="col ">
+                                <div class="card h-100">
+                                    <img src={p.image} class="card-img-top" alt="" />
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>Category :</b>{p.category}</h5>
+                                        <h6 class="card-title"><b>Price :</b>{p.price}</h6>
+                                        <p class="card-text"><b>Description :</b>{p.description.slice(1,100)}</p>
+                                        <p class="card-text"><b>Title :</b>{p.title}</p>
+                                        <p class="card-text"><b>Rating :</b>{p.rating.rate}</p>
+                                            <button class="btn btn-primary" onClick={()=>{DeleteP(p.id)}}>Del</button>
+                                    </div>
+                                </div>
+                            </div>
+                    })
+                }
+                </div>
+                </div>
+            }
+            ReactDOM.render(<Products/>,document.getElementById("root"))
+        </script>
+    </body>
+</html>
